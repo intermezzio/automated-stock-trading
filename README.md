@@ -1,2 +1,2 @@
-# automated-stock-trading
+# Automated Stock Trading
 Automated stock trading in Python
