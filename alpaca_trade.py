@@ -12,21 +12,21 @@ import alpaca_trade_api as tradeapi
 from config import *
 from predict_market import est_perc_increase
 
-# # load the alpaca account
-# api = tradeapi.REST(API_KEY, SECRET_KEY, api_version='v2')
+# load the alpaca account
+api = tradeapi.REST(API_KEY, SECRET_KEY, api_version='v2', base_url="https://paper-api.alpaca.markets")
 
-# # get account details
-# account = api.get_account()
+# get account details
+account = api.get_account()
 
-# positions = api.list_positions()
+positions = api.list_positions()
 
-# api.submit_order('AAPL',10,'buy','limit','gtc',170.50)
+api.submit_order('AAPL',10,'buy','limit','gtc',170.50)
 
 ############################################################################################
 
 
 # URLs for accessing the ALPACA API_KEY
-BASE_URL = "https://paper-api.alpaca.markets"
+APCA_API_BASE_URL = BASE_URL = "https://paper-api.alpaca.markets"
 ACCOUNT_URL = f"{BASE_URL}/v2/account"
 ORDERS_URL = f"{BASE_URL}/v2/orders"
 DELETE_URL = f"{BASE_URL}/v2/positions"
@@ -68,8 +68,9 @@ def opening_buys(symbols, account_money=account_money()):
 	print(est_increases[best_prospects])
 	if est_increases[best_prospects] > 1:
 		# buy this stock
-		r = make_order(best_prospects, account_money // current_prices[best_prospects], "buy", 
+		r = make_order(best_prospects, account_money // current_prices[best_prospects], "buy",
 			"market", "gtc")
+		print(account_money // current_prices[best_prospects])
 		return r.json()
 	return 0
 
@@ -78,16 +79,16 @@ def get_stock_price(symbol):
 	data = {
 		"types": "quote",
 		"token": IEX_API_TOKEN,
-		"filter": "open"
+		"filter": "latestPrice,open"
 	}
 	json_response = requests.get(IEX_DATA_URL, params=data).json()
-	return json_response["quote"]["open"]
+	return json_response["quote"]["latestPrice"]
 
 def liquidate():
 	requests.delete(DELETE_URL, headers=HEADERS)
 	requests.delete(ORDERS_URL, headers=HEADERS)
 
-if __name__ == "__main__":
+if __name__ == "__main__" and False:
 
 	while True:
 		d = datetime.datetime.now(pytz.timezone('US/Eastern'))
