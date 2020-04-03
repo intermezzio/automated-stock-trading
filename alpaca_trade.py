@@ -29,7 +29,8 @@ api.submit_order('AAPL',10,'buy','limit','gtc',170.50)
 APCA_API_BASE_URL = BASE_URL = "https://paper-api.alpaca.markets"
 ACCOUNT_URL = f"{BASE_URL}/v2/account"
 ORDERS_URL = f"{BASE_URL}/v2/orders"
-DELETE_URL = f"{BASE_URL}/v2/positions"
+POSITIONS_URL = f"{BASE_URL}/v2/positions"
+
 HEADERS = {
 	"APCA-API-KEY-ID": API_KEY,
 	"APCA-API-SECRET-KEY": SECRET_KEY
@@ -85,8 +86,8 @@ def get_stock_price(symbol):
 	return json_response["quote"]["latestPrice"]
 
 def liquidate():
-	requests.delete(DELETE_URL, headers=HEADERS)
 	requests.delete(ORDERS_URL, headers=HEADERS)
+	requests.delete(POSITIONS_URL, headers=HEADERS)
 
 if __name__ == "__main__" and False:
 
@@ -101,7 +102,7 @@ if __name__ == "__main__" and False:
 			elif d.hour == 15 and d.minute == 58:
 				print('liquidate')
 				liquidate()
-			time.sleep(60)
 		except Exception as e:
 			print(e)
-			continue
+		finally:
+			time.sleep(60)

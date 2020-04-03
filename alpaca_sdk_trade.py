@@ -11,6 +11,7 @@ import random
 import alpaca_trade_api as tradeapi
 
 from config import *
+from send_mail import *
 from predict_market import est_perc_increase
 
 # load the alpaca account
@@ -28,12 +29,16 @@ print(positions)
 
 # api.submit_order('AAPL',10,'buy','limit','gtc',170.50)
 
-def opening_buys(symbols, account_money=account_money):
+def opening_buys(symbols=["JNUG", "JDST"], account_money=account_money):
+	"""
+	Using the opening price and 2 weeks of historical data, choose what to buy
+
+	"""
 	est_increases = dict()
 	current_prices = dict()
 	for symbol in symbols:
 		current_prices[symbol] = float(api.alpha_vantage.current_quote(symbol)["05. price"])
-		print(current_prices[symbol])
+		print(f"{symbol}: {current_prices[symbol]}")
 		est_increases[symbol] = random.uniform(0.95, 1.05) # est_perc_increase(symbol, current_prices[symbol])
 
 	buy_ticker = max(est_increases, key=est_increases.get)
@@ -41,14 +46,18 @@ def opening_buys(symbols, account_money=account_money):
 	print(est_increases[buy_ticker])
 	if est_increases[buy_ticker] > 1:
 		# buy this stock
-		r = 1 #api.submit_order(buy_ticker, account_money // current_prices[buy_ticker], 
-			#"buy", "market", "gtc")
+		r = api.submit_order(buy_ticker, account_money // current_prices[buy_ticker], 
+			"buy", "market", "gtc")
 		print(account_money // current_prices[buy_ticker])
-		return r.json()
+		bought_stock_mail(r.symbol, r.qty, price=current_prices[symbol], trade=r)
+		return r
 	return 0
 
 def liquidate():
-	api.cancel_all_orders()
+	cancel = api.cancel_all_orders() # clear all incomplete orders
+	close = api.close_all_positions() # liquidate holdings
+	if close:
+		liquidate_stock_mail(close) # email notification if there are any trades
 
 
 if __name__ == "__main__" and len(sys.argv) > 1 and sys.argv[1] == "auto":
@@ -63,7 +72,8 @@ if __name__ == "__main__" and len(sys.argv) > 1 and sys.argv[1] == "auto":
 			elif d.hour == 15 and d.minute == 58:
 				print('liquidate')
 				liquidate()
-			time.sleep(60)
 		except Exception as e:
 			print(e)
 			continue
+		finally:
+			time.sleep(60)

@@ -1,7 +1,7 @@
 import yagmail
 yag = yagmail.SMTP("tradestockswithfriends@gmail.com")
 
-def sendMail(recipient="amascillaro@olin.edu", subject = "Stock API Update", body="test", attachment=[])
+def send_mail(recipient="amascillaro@olin.edu", subject = "Stock API Update", body="test", attachment=[]):
 	global yag
 	yag.send(
 	    to=recipient,
@@ -9,6 +9,15 @@ def sendMail(recipient="amascillaro@olin.edu", subject = "Stock API Update", bod
 	    contents=body, 
 	    attachments=attachment
 	)
+
+def sold_stock_mail(symbol="JNUG", qty=1, price=1.00, trade="test.json"):
+	send_mail(subject=f"Sold {symbol} at {price}", body=f"Sold {qty} shares of {symbol} at {price}.\n{trade}")
+
+def bought_stock_mail(symbol="JNUG", qty=1, price=1.00, trade="test.json"):
+	send_mail(subject=f"Bought {symbol} at {price}", body=f"Bought {qty} shares of {symbol} at {price}.\n{trade}")
+
+def liquidate_stock_mail(trades):
+	send_mail(subject=f"Liquidated All Stocks", body=f"See trade below.\n{trades}")
 
 if __name__ == "__main__":
 
