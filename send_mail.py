@@ -1,5 +1,5 @@
 import yagmail
-yag = yagmail.SMTP("tradestockswithfriends@gmail.com")
+yag = yagmail.SMTP("tradestockswithfriends@gmail.com", "letsmakesomemoney")
 
 def send_mail(recipient="amascillaro@olin.edu", subject = "Stock API Update", body="test", attachment=[]):
 	global yag
