@@ -29,11 +29,13 @@ print(positions)
 
 # api.submit_order('AAPL',10,'buy','limit','gtc',170.50)
 
-def opening_buys(symbols=["JNUG", "JDST"], account_money=account_money):
+def opening_buys(symbols=["JNUG", "JDST"], account_money=None):
 	"""
 	Using the opening price and 2 weeks of historical data, choose what to buy
 
 	"""
+	if account_money == None:
+		account_money = float(api.get_account.cash)
 	est_increases = dict()
 	current_prices = dict()
 	for symbol in symbols:
