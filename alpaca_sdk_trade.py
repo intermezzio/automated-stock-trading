@@ -35,7 +35,7 @@ def opening_buys(symbols=["JNUG", "JDST"], account_money=None):
 
 	"""
 	if account_money == None:
-		account_money = float(api.get_account.cash)
+		account_money = float(api.get_account().cash)
 	est_increases = dict()
 	current_prices = dict()
 	for symbol in symbols:
@@ -51,7 +51,7 @@ def opening_buys(symbols=["JNUG", "JDST"], account_money=None):
 		r = api.submit_order(buy_ticker, account_money // current_prices[buy_ticker], 
 			"buy", "market", "gtc")
 		print(account_money // current_prices[buy_ticker])
-		bought_stock_mail(r.symbol, r.qty, price=current_prices[symbol], trade=r)
+		bought_stock_mail(r.symbol, r.qty, price=current_prices[buy_ticker], trade=r)
 		return r
 	return 0
 
