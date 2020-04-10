@@ -20,7 +20,7 @@ account = api.get_account()
 
 positions = api.list_positions()
 
-api.submit_order('AAPL',10,'buy','limit','gtc',170.50)
+# api.submit_order('AAPL',10,'buy','limit','gtc',170.50)
 
 ############################################################################################
 
@@ -93,12 +93,23 @@ if __name__ == "__main__" and False:
 
 	while True:
 		d = datetime.datetime.now(pytz.timezone('US/Eastern'))
+
 		try:
 			print(d)
 			if d.hour == 9 and d.minute == 30:
-				print('buying now')
-				stuff = opening_buys(["JNUG", "NUGT", "JDST", "DUST"])
-				print(f"info: {stuff}")
+				market_clock = api.get_clock()
+				if market_clock.is_open:
+					print('buying now')
+					stuff = opening_buys(["JNUG", "NUGT", "JDST", "DUST"])
+					print(f"info: {stuff}")
+				else:
+					print('market is closed today')
+					send_mail(
+						subject="Market closed today",
+						body="We are not performing any transactions"
+					)
+					time.sleep(60 * 60 * 24 - 60 * 5)
+					# sleep one day minus five minutes
 			elif d.hour == 15 and d.minute == 58:
 				print('liquidate')
 				liquidate()
