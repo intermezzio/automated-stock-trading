@@ -1,5 +1,10 @@
 import yagmail
-yag = yagmail.SMTP("tradestockswithfriends@gmail.com")
+
+try:
+	from config import EMAIL_PASSWORD
+	yag = yagmail.SMTP("tradestockswithfriends@gmail.com", EMAIL_PASSWORD)
+except Exception:
+	yag = yagmail.SMTP("tradestockswithfriends@gmail.com")
 
 def send_mail(recipient="amascillaro@olin.edu", subject = "Stock API Update", body="test", attachment=[]):
 	global yag

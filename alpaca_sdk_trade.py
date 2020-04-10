@@ -40,7 +40,7 @@ def opening_buys(symbols=["JNUG", "JDST"], account_money=None):
 	current_prices = dict()
 	for symbol in symbols:
 		current_prices[symbol] = float(api.alpha_vantage.current_quote(symbol)["05. price"])
-		print(f"{symbol}: {current_prices[symbol]}")
+		print(f"{symbol}: ${current_prices[symbol]}")
 		est_increases[symbol] = random.uniform(0.95, 1.05) # est_perc_increase(symbol, current_prices[symbol])
 
 	buy_ticker = max(est_increases, key=est_increases.get)
